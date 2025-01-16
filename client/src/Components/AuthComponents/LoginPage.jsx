@@ -3,35 +3,59 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/userSlice';
+
 // Set the base URL for your API
 const BASE_URL = 'http://localhost:5000';
-
 
 const LoginPage = () => {
     const dispatch = useDispatch();
     const [passwordVisible, setPasswordVisible] = useState(false);
     const navigate = useNavigate();
 
-    const [email , setEmail] = useState("");
-    const [password , setPassword] = useState("");
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const [loading, setLoading] = useState(false);
+
+    // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent default form submission
-     
+        setLoading(true); // Set loading state to true during API call
+
         try {
-            const response = await axios.post(`${BASE_URL}/api/auth/login`,{email,password})
+            const response = await axios.post(`${BASE_URL}/api/auth/login`, { email, password });
+
             if (response.status === 200) {
-                dispatch(login({ token: response.data.token }));
+                dispatch(login({ token: response.data.token })); // Dispatch token to Redux store
+                localStorage.setItem('token', response.data.token); // Store token locally
                 alert('Login successful');
-                navigate('/home')
-              } else {
-                console.error('Login failed');
-              }
+                navigate('/home'); // Navigate to home page
+            }
         } catch (error) {
-            alert(`Error - ${error}`)
+            console.error('Login failed:', error);
+            alert(`Error: ${error.response?.data?.message || 'Login failed'}`);
+        } finally {
+            setLoading(false); // Reset loading state
         }
-        // Perform your API call or further processing here
     };
 
+    // Handle Google login
+    const handleGoogleLogin = async () => {
+        try {
+            const response = await axios.get(`${BASE_URL}/api/social/auth/google`, {
+                withCredentials: true, // Include cookies for authentication if required
+            });
+
+            if (response.status === 200) {
+                const token = response.data.token; // Access the token from the response
+                dispatch(login({ token })); // Dispatch token to Redux store
+                localStorage.setItem('token', token); // Store token locally
+                navigate('/home'); // Navigate to home page
+            }
+        } catch (error) {
+            console.error('Error during Google authentication:', error);
+            alert(`Google Login Error: ${error.response?.data?.message || 'Failed to login with Google'}`);
+        }
+    };
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
@@ -41,7 +65,7 @@ const LoginPage = () => {
                     <label className="block text-gray-700">Email</label>
                     <input
                         value={email}
-                        onChange={(e)=>setEmail(e.target.value)}
+                        onChange={(e) => setEmail(e.target.value)}
                         type="email"
                         className="w-full px-3 py-2 border rounded-lg"
                         placeholder="Enter your email"
@@ -53,7 +77,7 @@ const LoginPage = () => {
                     <div className="relative">
                         <input
                             value={password}
-                            onChange={(e)=>setPassword(e.target.value)}
+                            onChange={(e) => setPassword(e.target.value)}
                             type={passwordVisible ? 'text' : 'password'}
                             className="w-full px-3 py-2 border rounded-lg"
                             placeholder="Enter your password"
@@ -70,9 +94,10 @@ const LoginPage = () => {
                 </div>
                 <button
                     type="submit"
-                    className="w-full px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                    className={`w-full px-3 py-2 text-white rounded-lg ${loading ? 'bg-gray-400' : 'bg-blue-600 hover:bg-blue-700'}`}
+                    disabled={loading}
                 >
-                    Login
+                    {loading ? 'Logging in...' : 'Login'}
                 </button>
                 <div className="flex justify-between mt-4">
                     <button
@@ -96,18 +121,18 @@ const LoginPage = () => {
                 <div className="flex space-x-4">
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                        onClick={() => (window.location.href = "http://localhost:5000/api/social/auth/google")}
+                        onClick={handleGoogleLogin}
                     >
                         Google
                     </button>
                     <button
-                        className="flex items-center justify-center px-4 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-400"
+                        className="flex items-center justify-center px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
                         onClick={() => console.log('Facebook Login')}
                     >
                         Facebook
                     </button>
                     <button
-                        className="flex items-center justify-center px-4 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-400"
+                        className="flex items-center justify-center px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
                         onClick={() => console.log('LinkedIn Login')}
                     >
                         LinkedIn

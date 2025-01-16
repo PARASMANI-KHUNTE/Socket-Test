@@ -73,10 +73,13 @@ router.get(
         { expiresIn: "1h" }
       );
 
-      return res.status(200).json({
-        message : "login Successful",
-        token : token
-    })
+      res.cookie('token', token, {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'Strict',
+    });
+    res.status(200).json({token : token , message: 'Login successful' });
+    
     } catch (err) {
       console.error("Error in Google callback:", err);
       res.redirect("/failure");
