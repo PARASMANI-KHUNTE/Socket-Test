@@ -49,7 +49,7 @@ router.post('/signup', async (req, res) => {
         });
     } catch (error) {
         // Handle any errors that might occur during the process
-        console.error(error);
+        // console.error(error);
         res.status(500).json({
             message: "An error occurred while processing your request."
         });
@@ -114,13 +114,13 @@ router.post('/forgot-password', async (req, res) => {
 
         // Send OTP to the user's email
         await sendOTP(email);
-        console.log("User ID:", isUser.id);
+        // console.log("User ID:", isUser.id);
 
         // Generate token using the user's ID
         const token = generateTokenForPassword(isUser.id); // Generate the token synchronously
 
         if (!token) {
-            console.log("Unable to generate token");
+            // console.log("Unable to generate token");
             return res.status(500).json({
                 message: "Internal Server Error: Unable to generate token"
             });
@@ -132,7 +132,7 @@ router.post('/forgot-password', async (req, res) => {
             token: token
         });
     } catch (error) {
-        console.error("Error in forgot-password route:", error.message);
+        // console.error("Error in forgot-password route:", error.message);
         return res.status(500).json({
             message: "Internal Server Error"
         });
@@ -174,7 +174,7 @@ router.post('/verify-otp', async (req, res) => {
             message: "OTP successfully verified.",
         });
     } catch (error) {
-        console.error("Error verifying OTP:", error.message);
+        // console.error("Error verifying OTP:", error.message);
         return res.status(500).json({
             message: "An error occurred while verifying the OTP.",
             error: error.message,
@@ -212,7 +212,7 @@ router.put('/update-password', async (req, res) => {
             message: "Password updated successfully",
         });
     } catch (error) {
-        console.error("Error updating password:", error.message);
+        // console.error("Error updating password:", error.message);
         return res.status(500).json({
             message: "Internal server error",
         });

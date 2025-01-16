@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 // Set the base URL for your API
 const BASE_URL = 'http://localhost:5000';
-
+import { ToastContainer, toast } from 'react-toastify';
 
 const SignupPage = () => {
     const [passwordVisible, setPasswordVisible] = useState(false);
@@ -128,18 +128,19 @@ const SignupPage = () => {
                     </button>
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-400"
-                        onClick={() => console.log('Facebook Signup')}
+                        onClick={() => toast('Facebook comming soon')}
                     >
                         Facebook
                     </button>
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-400"
-                        onClick={() => console.log('LinkedIn Signup')}
+                        onClick={() => toast('LinkedIn comming soon')}
                     >
                         LinkedIn
                     </button>
                 </div>
             </div>
+            <ToastContainer />
         </div>
     );
 };

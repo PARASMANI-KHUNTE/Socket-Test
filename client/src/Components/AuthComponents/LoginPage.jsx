@@ -26,12 +26,8 @@ const LoginPage = () => {
       
           if (response.status === 200) {
             const LogToken = response.data.token
-            console.log(LogToken)
             if (LogToken) {
                 const decoded = jwtDecode(LogToken);
-                console.log(`
-                    name : ${decoded.payload.name},
-                    email : ${decoded.payload.email},`)
                 // Dispatch login with just the token
                 dispatch(
                   login({
@@ -49,7 +45,7 @@ const LoginPage = () => {
             navigate('/home'); // Navigate to home page
           }
         } catch (error) {
-          console.error('Login failed:', error);
+          toast.error('Login failed:', error);
           toast(`Error: ${error.response?.data?.message || 'Login failed'}`);
         } finally {
           setLoading(false); // Reset loading state
@@ -129,13 +125,13 @@ const LoginPage = () => {
                     </button>
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-                        onClick={() => console.log('Facebook Login')}
+                        onClick={() => toast('Facebook coming soon')}
                     >
                         Facebook
                     </button>
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-gray-300 text-gray-700 rounded-lg hover:bg-gray-400"
-                        onClick={() => console.log('LinkedIn Login')}
+                        onClick={() => toast('LinkedIn coming soon')}
                     >
                         LinkedIn
                     </button>

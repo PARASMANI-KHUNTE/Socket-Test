@@ -45,7 +45,6 @@ passport.use(
 
         return done(null, user);
       } catch (err) {
-        console.error("Error in Google callback:", err);
         return done(err, null);
       }
     }
@@ -145,7 +144,7 @@ router.get(
       );
       res.status(200).redirect(`http://localhost:5173/home?token=${token}`);
     } catch (err) {
-      console.error("Error in Google callback:", err);
+     
       res.redirect("/failure");
     }
   }

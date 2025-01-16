@@ -8,7 +8,7 @@ import ForgotPassword from './components/AuthComponents/ForgotPassword';
 import OtpPage from './components/AuthComponents/OtpPage';
 import UserProfile from './components/UserProfile';
 import ResetPassword from './components/AuthComponents/ResetPassword';
-import ReduxData from './Components/Chat/ReduxData';
+
 
 const App = () => {
     return (
@@ -22,8 +22,7 @@ const App = () => {
                     <Route path="/otp" element={<OtpPage />} />
                     <Route path="/home" element={<UserProfile />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
-                    <Route path="/ReduxData" element={<ReduxData />} />
-
+         
                 </Routes>
             </div>
         </Router>

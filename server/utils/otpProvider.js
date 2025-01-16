@@ -28,14 +28,12 @@ const OTP = Math.floor(Math.random() * 9000) + 1000;
   try {
     // Send the email
     const info = await transporter.sendMail(mailOptions);
-    console.log('Message sent: %s', info.messageId);
 
     // Store the OTP in the temporary store with expiration (5 minutes)
     otpStore.set(email, { otp: OTP, expires: Date.now() + 5 * 60 * 1000 });
 
     return OTP; // Return the OTP for further use if needed
   } catch (error) {
-    console.error('Error sending email:', error);
     throw error;
   }
 };

@@ -6,7 +6,7 @@ import Logout from "../components/AuthComponents/Logout";
 import { useNavigate } from "react-router-dom";
 import { login } from "../redux/userSlice"; // Add your action import
 import jwtDecode from 'jwt-decode';
-
+import { ToastContainer, toast } from 'react-toastify';
 const BASE_URL = "http://localhost:5000";
 
 const UserProfile = () => {
@@ -16,7 +16,6 @@ const UserProfile = () => {
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
-    if (!isAuthenticated) {
       // Get the token from the URL if it exists
       const urlParams = new URLSearchParams(window.location.search);
       const tokenFromUrl = urlParams.get("token");
@@ -25,17 +24,30 @@ const UserProfile = () => {
         // Dispatch login with just the token
         dispatch(
           login({
-            name : decoded.name,
-            email : decoded.email,
+            name :  decoded.name,
+            email :  decoded.email,
             token: tokenFromUrl,
           })
         );
        // Optionally save token in localStorage
       } else {
-        navigate("/login");
+        const token = localStorage.getItem("token");
+        if (token) {
+          const decoded = jwtDecode(token);
+          dispatch(
+            login({
+              name: decoded.payload.name,
+              email: decoded.payload.email,
+              token,
+            })
+          );
+        }else{
+          navigate("/login");
+        }
+        
       }
-    }
-  }, [isAuthenticated, dispatch, navigate]);
+    
+  }, [ dispatch, navigate]);
 
   // Fetch user data only after the email is available in Redux
   useEffect(() => {
@@ -51,10 +63,10 @@ const UserProfile = () => {
               ProfileUrl: response.data.ProfileUrl,
             });
           } else {
-            console.error("No user data returned from API");
+            toast.error("No user data returned from API");
           }
         } catch (error) {
-          console.error("Error fetching user data:", error);
+          toast.error("Error fetching user data:", error);
         }
       };
 
@@ -99,6 +111,7 @@ const UserProfile = () => {
         <p>isAuthenticated - {isAuthenticated ? "yes" : "no"}</p>
 
       </div>
+      <ToastContainer />
     </>
   );
 };

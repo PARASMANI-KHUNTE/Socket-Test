@@ -10,7 +10,7 @@ router.get("/:userId", async (req, res) => {
     const chats = await Chat.find({ participants: userId }).populate("messages");
     res.status(200).json(chats);
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ error: "Failed to fetch chats" });
   }
 });
@@ -23,7 +23,7 @@ router.post("/", async (req, res) => {
     const savedChat = await newChat.save();
     res.status(201).json(savedChat);
   } catch (err) {
-    console.error(err);
+    // console.error(err);
     res.status(500).json({ error: "Failed to create chat" });
   }
 });

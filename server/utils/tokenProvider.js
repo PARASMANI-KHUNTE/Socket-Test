@@ -6,7 +6,6 @@ const generateToken = (payload) => {
 
 
 const generateTokenForPassword = (userId) => {
-  console.log("yes got the user id -", userId)
   const secretKey = process.env.secretKey;
   const token = jsonwebtoken.sign(
     { userId }, // payload

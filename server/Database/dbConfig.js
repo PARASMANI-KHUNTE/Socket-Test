@@ -6,9 +6,11 @@ const dbname = process.env.DbName
 const con = async ()=>{
     const dbcon = await mongoose.connect(`${uri}/${dbname}`)
     if(dbcon){
-        console.log("Db is connected ")
+        return  "Db is connected "
+        // console.log("Db is connected ")
     }else{
-        console.log("Db is failed to connect")
+        return "Db is failed to connect"
+        // console.log("Db is failed to connect")
     }
 }
 
