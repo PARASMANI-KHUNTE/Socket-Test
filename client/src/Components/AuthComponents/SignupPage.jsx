@@ -122,18 +122,18 @@ const SignupPage = () => {
                 <div className="flex space-x-4">
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                        onClick={() => console.log('Google Signup')}
+                        onClick={() => (window.location.href = "http://localhost:5000/api/social/auth/google")}
                     >
                         Google
                     </button>
                     <button
-                        className="flex items-center justify-center px-4 py-2 bg-blue-800 text-white rounded-lg hover:bg-blue-900"
+                        className="flex items-center justify-center px-4 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-400"
                         onClick={() => console.log('Facebook Signup')}
                     >
                         Facebook
                     </button>
                     <button
-                        className="flex items-center justify-center px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                        className="flex items-center justify-center px-4 py-2 bg-gray-300 text-white rounded-lg hover:bg-gray-400"
                         onClick={() => console.log('LinkedIn Signup')}
                     >
                         LinkedIn

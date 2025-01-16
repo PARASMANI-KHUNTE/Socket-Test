@@ -6,86 +6,11 @@ const jwt = require('jsonwebtoken')
 const secretkey = process.env.secretKey
 const {generateTokenForPassword} = require('../utils/tokenProvider')
 const { sendOTP, verifyOTP }  = require('../utils/otpProvider')
-// const passport = require("passport");
-// const GoogleStrategy = require("passport-google-oauth20").Strategy;
-// const FacebookStrategy = require("passport-facebook").Strategy;
-// const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
-
-
-
-// // Serialize and deserialize user for session support
-// passport.serializeUser((user, done) => {
-//     done(null, user.id);
-// });
-// passport.deserializeUser((id, done) => {
-//     const user = User.find(u => u.id === id);
-//     done(null, user);
-// });
-
-// // Configure Google Strategy
-// passport.use(new GoogleStrategy({
-//     clientID: process.env.GOOGLE_CLIENT_ID,
-//     clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-//     callbackURL: "http://localhost:5000/auth/google/callback",
-// }, async (accessToken, refreshToken, profile, done) => {
-//     let user = User.find(u => u.email === profile.emails[0].value);
-//     if (!user) {
-//         user = {
-//             id: profile.id,
-//             name: profile.displayName,
-//             email: profile.emails[0].value,
-//         };
-//         User.push(user); // Save user to mock DB
-//     }
-//     return done(null, user);
-// }));
-
-// // Configure Facebook Strategy
-// passport.use(new FacebookStrategy({
-//     clientID: process.env.FACEBOOK_APP_ID,
-//     clientSecret: process.env.FACEBOOK_APP_SECRET,
-//     callbackURL: "http://localhost:5000/auth/facebook/callback",
-//     profileFields: ["id", "displayName", "emails"],
-// }, async (accessToken, refreshToken, profile, done) => {
-//     let user = User.find(u => u.email === profile.emails[0].value);
-//     if (!user) {
-//         user = {
-//             id: profile.id,
-//             name: profile.displayName,
-//             email: profile.emails[0].value,
-//         };
-//         User.push(user); // Save user to mock DB
-//     }
-//     return done(null, user);
-// }));
-
-// // Configure LinkedIn Strategy
-// passport.use(new LinkedInStrategy({
-//     clientID: process.env.LINKEDIN_CLIENT_ID,
-//     clientSecret: process.env.LINKEDIN_CLIENT_SECRET,
-//     callbackURL: "http://localhost:5000/auth/linkedin/callback",
-//     scope: ['r_emailaddress', 'r_liteprofile'],
-// }, async (accessToken, refreshToken, profile, done) => {
-//     let user = User.find(u => u.email === profile.emails[0].value);
-//     if (!user) {
-//         user = {
-//             id: profile.id,
-//             name: profile.displayName,
-//             email: profile.emails[0].value,
-//         };
-//         User.push(user); // Save user to mock DB
-//     }
-//     return done(null, user);
-// }));
-
 
 
 router.post('/signup', async (req, res) => {
     const { name, email, mobile, password } = req.body; // Correctly destructure fields from req.body
-    console.log(name)
-    console.log(email)
-    console.log(mobile)
-    console.log(password)
+
 
     // Check if all required fields are provided
     if (!name || !email || !mobile || !password) {

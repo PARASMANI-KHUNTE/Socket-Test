@@ -11,11 +11,7 @@ const UserSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  mobile: {
-    type: String,
-    unique: true, // Still unique but optional
-    sparse: true, // Allow multiple null/undefined values
-  },
+  mobile: { type: String, unique: true, sparse: true }, //
   googleId: {
     type: String,
   },
