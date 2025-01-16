@@ -15,12 +15,11 @@ if (token) {
 }
 
 const initialState = {
-  name: decoded?.payload?.name || '',
-  email: decoded?.payload?.email || '',
+  name: decoded?.name || '', // Adjusted to use `decoded` directly
+  email: decoded?.email || '', // Adjusted to use `decoded` directly
   token: token || '',
   isAuthenticated: !!token && !!decoded,
 };
-
 
 const userSlice = createSlice({
   name: 'user',
@@ -28,16 +27,21 @@ const userSlice = createSlice({
   reducers: {
     login: (state, action) => {
       const { token } = action.payload;
-      // Decode token to extract payload
-      const decoded = jwtDecode(token);
+      try {
+        // Decode token to extract payload
+        const decoded = jwtDecode(token);
 
-      state.name = decoded.payload.name;
-      state.email = decoded.payload.email;
-      state.token = token;
-      state.isAuthenticated = true;
+        state.name = decoded.name; // Adjusted based on token structure
+        state.email = decoded.email; // Adjusted based on token structure
+        state.token = token;
+        state.isAuthenticated = true;
 
-      // Store token in localStorage
-      localStorage.setItem('token', token);
+        // Store token in localStorage
+        localStorage.setItem('token', token);
+      } catch (error) {
+        console.error("Invalid token provided during login:", error.message);
+        state.isAuthenticated = false;
+      }
     },
     logout: (state) => {
       state.name = '';

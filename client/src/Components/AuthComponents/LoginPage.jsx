@@ -38,24 +38,7 @@ const LoginPage = () => {
         }
     };
 
-    // Handle Google login
-    const handleGoogleLogin = async () => {
-        try {
-            const response = await axios.get(`${BASE_URL}/api/social/auth/google`, {
-                withCredentials: true, // Include cookies for authentication if required
-            });
 
-            if (response.status === 200) {
-                const token = response.data.token; // Access the token from the response
-                dispatch(login({ token })); // Dispatch token to Redux store
-                localStorage.setItem('token', token); // Store token locally
-                navigate('/home'); // Navigate to home page
-            }
-        } catch (error) {
-            console.error('Error during Google authentication:', error);
-            alert(`Google Login Error: ${error.response?.data?.message || 'Failed to login with Google'}`);
-        }
-    };
 
     return (
         <div className="flex flex-col items-center justify-center h-screen bg-gray-100">
@@ -121,7 +104,7 @@ const LoginPage = () => {
                 <div className="flex space-x-4">
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                        onClick={handleGoogleLogin}
+                        onClick={()=>(window.location.href="http://localhost:5000/api/social/auth/google")}
                     >
                         Google
                     </button>

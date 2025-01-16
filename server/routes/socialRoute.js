@@ -73,12 +73,8 @@ router.get(
         { expiresIn: "1h" }
       );
 
-      res.cookie('token', token, {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
-    });
-    res.status(200).json({token : token , message: 'Login successful' });
+     
+    res.status(200).redirect(`http://localhost:5173/home?token=${token}`);
     
     } catch (err) {
       console.error("Error in Google callback:", err);
