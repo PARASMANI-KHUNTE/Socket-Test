@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/userSlice';
 // Set the base URL for your API
-const BASE_URL = 'https://chatapplication-3lfn.onrender.com';
+const BASE_URL = 'http://localhost:5000';
 
 
 const LoginPage = () => {
@@ -96,7 +96,7 @@ const LoginPage = () => {
                 <div className="flex space-x-4">
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                        onClick={() => console.log('Google Login')}
+                        onClick={() => (window.location.href = "http://localhost:5000/auth/google")}
                     >
                         Google
                     </button>

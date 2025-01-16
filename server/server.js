@@ -5,6 +5,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
 const passport = require("passport");
+const session = require("express-session");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 const FacebookStrategy = require("passport-facebook").Strategy;
 const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
@@ -21,6 +22,7 @@ const io = new Server(server, {
     methods: ["GET", "POST"],
   },
 });
+const jwt = require("jsonwebtoken");
 
 // Middleware
 app.use(cors());
@@ -32,14 +34,43 @@ const db = require('./config/dbConfig');
 db();
 
 
-passport.serializeUser((user, done) => {
-  done(null, user.id);
-});
-passport.deserializeUser((id, done) => {
-  const user = User.find(u => u.id === id);
-  done(null, user || null);
-});
+// Session setup
+app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 
+// Initialize Passport
+app.use(passport.initialize());
+app.use(passport.session());
+
+// Serialize and deserialize user
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((user, done) => done(null, user));
+
+
+// Configure Google Strategy
+passport.use(
+  new GoogleStrategy(
+    {
+      clientID: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
+      callbackURL: "/auth/google/callback",
+    },
+    async (accessToken, refreshToken, profile, done) => {
+      const token = jwt.sign({ id: profile.id }, "JWT_SECRET", { expiresIn: "1h" })
+      const user = await User.findOneAndUpdate(
+        { googleId: profile.id },
+        { email: profile.emails[0].value, name: profile.displayName },
+        { upsert: true, new: true }
+      );
+      return done(null,user, { profile, token });
+    }
+  )
+);
+
+
+// Routes
+app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+app.get("/auth/google/callback",passport.authenticate("google", { failureRedirect: "/" }),(req, res) => res.redirect("/")
+);
 // Routes
 const authRoutes = require('./routes/authRoutes');
 const chatRoutes = require('./routes/chatRoutes');
