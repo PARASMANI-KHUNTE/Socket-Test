@@ -1,14 +1,22 @@
 import { useDispatch } from 'react-redux';
-import { logout } from '../../redux/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const Logout = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const handleLogout = () => {
-    dispatch(logout());
+    // Clear token and reset Redux state
+    localStorage.removeItem('token');
+    dispatch({ type: 'LOGOUT_USER' });
+    navigate('/login');
   };
 
-  return <button className='h-10 rounded border w-20 bg-red-400 text-white p-2 hover:bg-red-500 hover:shadow-md transition' onClick={handleLogout}>Logout</button>;
+  return (
+    <button onClick={handleLogout} className="btn btn-danger">
+      Logout
+    </button>
+  );
 };
 
 export default Logout;

@@ -7,9 +7,8 @@ const dotenv = require('dotenv');
 const passport = require("passport");
 const session = require("express-session");
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
-const FacebookStrategy = require("passport-facebook").Strategy;
-const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
-const User = require('./models/User')
+const User = require('./models/User');
+
 // Load environment variables
 dotenv.config();
 
@@ -18,7 +17,7 @@ const app = express();
 const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
-    origin: "https://chatapplication-client-2zc4.onrender.com", // Replace with your client URL for production
+    origin: "http://localhost:5173/", // Replace with your client URL for production
     methods: ["GET", "POST"],
   },
 });
@@ -33,7 +32,6 @@ app.use(bodyParser.json());
 const db = require('./config/dbConfig');
 db();
 
-
 // Session setup
 app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 
@@ -41,12 +39,19 @@ app.use(session({ secret: "secret", resave: false, saveUninitialized: true }));
 app.use(passport.initialize());
 app.use(passport.session());
 
+
+const authRoutes = require('./routes/authRoutes');
+const chatRoutes = require('./routes/chatRoutes');
+const userRoutes = require('./routes/userRoutes');
+app.use("/api/auth", authRoutes);
+app.use("/api/chat", chatRoutes);
+app.use("/api/user", userRoutes);
+
+
 // Serialize and deserialize user
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((user, done) => done(null, user));
 
-
-// Configure Google Strategy
 passport.use(
   new GoogleStrategy(
     {
@@ -55,90 +60,72 @@ passport.use(
       callbackURL: "/auth/google/callback",
     },
     async (accessToken, refreshToken, profile, done) => {
-      const token = jwt.sign({ id: profile.id }, "JWT_SECRET", { expiresIn: "1h" })
-      const user = await User.findOneAndUpdate(
-        { googleId: profile.id },
-        { email: profile.emails[0].value, name: profile.displayName },
-        { upsert: true, new: true }
-      );
-      return done(null,user, { profile, token });
+      try {
+        const email = profile.emails[0].value; // Get email from Google
+        const googleId = profile.id;
+        const name = profile.displayName;
+        const ProfileUrl = profile.photos[0]?.value;
+
+        // Check if the user already exists
+        let user = await User.findOne({ email });
+
+        if (!user) {
+          // Create new user
+          user = await User.create({
+            name,
+            email,
+            googleId,
+            mobile: null, // Omit mobile field if not provided
+            ProfileUrl,
+          });
+        }
+
+        return done(null, user);
+      } catch (err) {
+        console.error('Error in Google callback:', err);
+        return done(err, null);
+      }
     }
   )
 );
-
-
 // Routes
 app.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-app.get("/auth/google/callback",passport.authenticate("google", { failureRedirect: "/" }),(req, res) => res.redirect("/")
-);
-// Routes
-const authRoutes = require('./routes/authRoutes');
-const chatRoutes = require('./routes/chatRoutes');
-const userRoutes = require('./routes/userRoutes');
-app.use("/api/auth", authRoutes);
-app.use("/api/chat", chatRoutes);
-app.use("/api/user", userRoutes);
 
-// Models
-const Chat = require('./models/Chat');
-const Message = require('./models/Message');
-
-// Socket.IO Logic
-io.on("connection", (socket) => {
-  console.log("A user connected:", socket.id);
-
-  // Join a specific room for private chats
-  socket.on("joinRoom", ({ chatId }) => {
-    if (!chatId) {
-      console.error("Chat ID is required to join a room.");
-      return;
-    }
-    socket.join(chatId);
-    console.log(`User joined chat room: ${chatId}`);
-  });
-
-  // Handle new message
-  socket.on("sendMessage", async ({ chatId, senderId, receiverId, content }) => {
-    if (!chatId || !senderId || !receiverId || !content) {
-      console.error("All fields are required to send a message.");
-      return;
-    }
+app.get(
+  "/auth/google/callback",
+  passport.authenticate("google", { failureRedirect: "/failure" }),
+  async (req, res) => {
     try {
-      // Save message to MongoDB
-      const message = new Message({
-        sender: senderId,
-        receiver: receiverId,
-        content,
-        type: "text", // Change dynamically if needed
-      });
-      const savedMessage = await message.save();
+      const user = req.user;
 
-      // Update Chat with new message
-      await Chat.findByIdAndUpdate(chatId, {
-        $push: { messages: savedMessage._id },
-      });
+      const token = jwt.sign(
+        {
+          id: user._id,
+          name: user.name,
+          email: user.email,
+        },
+        process.env.JWT_SECRET || "JWT_SECRET",
+        { expiresIn: "1h" }
+      );
 
-      // Emit message to other participants in the chat room
-      io.to(chatId).emit("receiveMessage", {
-        chatId,
-        senderId,
-        receiverId,
-        content,
-        timestamp: savedMessage.createdAt, // Adjust to match your schema
-      });
-
+      res.redirect(
+        `http://localhost:5173/home?token=${token}`
+      );
     } catch (err) {
-      console.error("Error sending message:", err);
+      console.error("Error in Google callback:", err);
+      res.redirect("/failure");
     }
-  });
+  }
+);
 
-  socket.on("disconnect", () => {
-    console.log("User disconnected:", socket.id);
+app.get('/failure', (req, res) => {
+  res.json({
+    message: "Failed to connect with Google"
   });
 });
 
 // Server Listener
-const PORT = process.env.PORT || 5000; // Default to 5000 if PORT is undefined
+const PORT = process.env.PORT || 5000;
 server.listen(PORT, () => {
   console.log(`Server is up on http://localhost:${PORT}`);
 });
