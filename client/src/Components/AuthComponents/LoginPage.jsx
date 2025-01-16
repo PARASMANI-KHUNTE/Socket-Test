@@ -3,7 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { useDispatch } from 'react-redux';
 import { login } from '../../redux/userSlice';
-
+import { ToastContainer, toast } from 'react-toastify';
+import jwtDecode from 'jwt-decode';
 // Set the base URL for your API
 const BASE_URL = 'http://localhost:5000';
 
@@ -16,27 +17,45 @@ const LoginPage = () => {
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
 
-    // Handle form submission
     const handleSubmit = async (event) => {
         event.preventDefault(); // Prevent default form submission
         setLoading(true); // Set loading state to true during API call
-
+      
         try {
-            const response = await axios.post(`${BASE_URL}/api/auth/login`, { email, password });
-
-            if (response.status === 200) {
-                dispatch(login({ token: response.data.token })); // Dispatch token to Redux store
-                localStorage.setItem('token', response.data.token); // Store token locally
-                alert('Login successful');
-                navigate('/home'); // Navigate to home page
-            }
+          const response = await axios.post(`${BASE_URL}/api/auth/login`, { email, password });
+      
+          if (response.status === 200) {
+            const LogToken = response.data.token
+            console.log(LogToken)
+            if (LogToken) {
+                const decoded = jwtDecode(LogToken);
+                console.log(`
+                    name : ${decoded.payload.name},
+                    email : ${decoded.payload.email},`)
+                // Dispatch login with just the token
+                dispatch(
+                  login({
+                    name : decoded.payload.name,
+                    email : decoded.payload.email,
+                    token: LogToken,
+                  })
+                );
+               // Optionally save token in localStorage
+              } else {
+                navigate("/login");
+              } // Store token locally
+      
+            toast('Login successful');
+            navigate('/home'); // Navigate to home page
+          }
         } catch (error) {
-            console.error('Login failed:', error);
-            alert(`Error: ${error.response?.data?.message || 'Login failed'}`);
+          console.error('Login failed:', error);
+          toast(`Error: ${error.response?.data?.message || 'Login failed'}`);
         } finally {
-            setLoading(false); // Reset loading state
+          setLoading(false); // Reset loading state
         }
-    };
+      };
+      
 
 
 
@@ -122,6 +141,8 @@ const LoginPage = () => {
                     </button>
                 </div>
             </div>
+            <ToastContainer />
+
         </div>
     );
 };

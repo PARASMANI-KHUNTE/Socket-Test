@@ -5,6 +5,7 @@ const UserSchema = new mongoose.Schema({
     type: String,
     required: true,
     trim: true,
+    unique : false
   },
   email: {
     type: String,
@@ -24,6 +25,7 @@ const UserSchema = new mongoose.Schema({
   },
   ProfileUrl: {
     type: String,
+    default: "https://i.pinimg.com/736x/4c/85/31/4c8531dbc05c77cb7a5893297977ac89.jpg"
   },
 });
 

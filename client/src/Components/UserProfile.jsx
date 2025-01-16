@@ -5,13 +5,14 @@ import Navbar from "./Navbar";
 import Logout from "../components/AuthComponents/Logout";
 import { useNavigate } from "react-router-dom";
 import { login } from "../redux/userSlice"; // Add your action import
+import jwtDecode from 'jwt-decode';
 
 const BASE_URL = "http://localhost:5000";
 
 const UserProfile = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const { name, email, isAuthenticated, token } = useSelector((state) => state.user);
+  const {name,email, isAuthenticated } = useSelector((state) => state.user);
   const [userData, setUserData] = useState(null);
 
   useEffect(() => {
@@ -19,47 +20,47 @@ const UserProfile = () => {
       // Get the token from the URL if it exists
       const urlParams = new URLSearchParams(window.location.search);
       const tokenFromUrl = urlParams.get("token");
-
       if (tokenFromUrl) {
-        // Save the token to Redux using loginUser
+        const decoded = jwtDecode(tokenFromUrl);
+        // Dispatch login with just the token
         dispatch(
           login({
+            name : decoded.name,
+            email : decoded.email,
             token: tokenFromUrl,
-            name: "", // If name is not available, set empty or fetch after successful login
-            email: "", // Same as above
           })
         );
-        localStorage.setItem("token", tokenFromUrl); // Optionally save token in localStorage
+       // Optionally save token in localStorage
       } else {
         navigate("/login");
       }
-    } else {
-      // Check if user data is already available
-      if (email) {
-        // Fetch user data from the server
-        const getUserData = async () => {
-          try {
-            const response = await axios.post(`${BASE_URL}/api/user/user`, { email });
-
-            if (response.data) {
-              setUserData({
-                name: response.data.name, // Store the name returned from API
-                email: response.data.email,
-                ProfileUrl: response.data.ProfileUrl,
-              });
-            } else {
-              console.error("No user data returned from API");
-            }
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-          }
-        };
-        getUserData();
-      } else {
-        console.error("Email is missing in the Redux state");
-      }
     }
-  }, [isAuthenticated, email, dispatch, navigate]);
+  }, [isAuthenticated, dispatch, navigate]);
+
+  // Fetch user data only after the email is available in Redux
+  useEffect(() => {
+    if (email) {
+      const getUserData = async () => {
+        try {
+          const response = await axios.post(`${BASE_URL}/api/user/user`, { email });
+
+          if (response.data) {
+            setUserData({
+              name: response.data.name, // Store the name returned from API
+              email: response.data.email,
+              ProfileUrl: response.data.ProfileUrl,
+            });
+          } else {
+            console.error("No user data returned from API");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+      };
+
+      getUserData();
+    }
+  }, [email]); // Only run when email is updated
 
   if (!userData) {
     return (
@@ -90,6 +91,13 @@ const UserProfile = () => {
           </div>
           <Logout />
         </div>
+      </div>
+      <div className="flex flex-col justify-center p-4">
+        {/* {data.imgurl && <img src={data.imgurl} alt="Profile" />} */}
+        <h1>Name - {name}</h1>
+        <h1>Email - {email}</h1>
+        <p>isAuthenticated - {isAuthenticated ? "yes" : "no"}</p>
+
       </div>
     </>
   );

@@ -1,24 +1,12 @@
 import { createSlice } from '@reduxjs/toolkit';
-import jwtDecode from 'jwt-decode';
 
-const token = localStorage.getItem('token'); // Retrieve token from localStorage
-let decoded = null;
 
-if (token) {
-  try {
-    decoded = jwtDecode(token); // Decode only if the token is valid
-  } catch (error) {
-    console.error("Invalid token provided:", error.message);
-    // Handle invalid token (e.g., clear it from storage)
-    localStorage.removeItem('token');
-  }
-}
 
 const initialState = {
-  name: decoded?.name || '', // Adjusted to use `decoded` directly
-  email: decoded?.email || '', // Adjusted to use `decoded` directly
-  token: token || '',
-  isAuthenticated: !!token && !!decoded,
+  name: '', // Adjusted to use `decoded` directly
+  email:  '', // Adjusted to use `decoded` directly
+  token: '',
+  isAuthenticated: ''
 };
 
 const userSlice = createSlice({
@@ -26,13 +14,11 @@ const userSlice = createSlice({
   initialState,
   reducers: {
     login: (state, action) => {
-      const { token } = action.payload;
+      const {name,email, token } = action.payload;
       try {
-        // Decode token to extract payload
-        const decoded = jwtDecode(token);
-
-        state.name = decoded.name; // Adjusted based on token structure
-        state.email = decoded.email; // Adjusted based on token structure
+        // Check if the decoded token contains email and name
+        state.name = name || ''; // Make sure `decoded.name` exists
+        state.email = email || ''; // Make sure `decoded.email` exists
         state.token = token;
         state.isAuthenticated = true;
 
