@@ -3,7 +3,7 @@ import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 // Set the base URL for your API
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://chat-app-server-zwfu.onrender.com';
 
 
 const ResetPassword = () => {
