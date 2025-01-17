@@ -80,9 +80,11 @@ router.post('/login',async(req,res)=>{
     }
 
     const payload = {
+        id : IsUser._id,
         name : IsUser.name,
         email 
     }
+    console.log(payload)
     
     const generateToken =  jwt.sign({payload},secretkey,{expiresIn: '1h'})
 
@@ -248,23 +250,4 @@ router.post('/verify-token', async (req, res) => {
     }
 });
 
-
-// Routes for Social Login
-// router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));
-// router.get("/auth/google/callback", passport.authenticate("google", { failureRedirect: "/" }),
-//     (req, res) => {
-//         res.json({ message: "Logged in with Google", user: req.user });
-//     });
-
-// router.get("/auth/facebook", passport.authenticate("facebook", { scope: ["email"] }));
-// router.get("/auth/facebook/callback", passport.authenticate("facebook", { failureRedirect: "/" }),
-//     (req, res) => {
-//         res.json({ message: "Logged in with Facebook", user: req.user });
-//     });
-
-// router.get("/auth/linkedin", passport.authenticate("linkedin", { scope: ["r_emailaddress", "r_liteprofile"] }));
-// router.get("/auth/linkedin/callback", passport.authenticate("linkedin", { failureRedirect: "/" }),
-//     (req, res) => {
-//         res.json({ message: "Logged in with LinkedIn", user: req.user });
-//     });
 module.exports = router;
