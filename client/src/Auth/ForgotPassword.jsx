@@ -5,7 +5,7 @@ import { useDispatch } from "react-redux";
 import { setUserId } from "../redux/otpSlice";
 
 // Set the base URL for your API
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://chat-app-server-zwfu.onrender.com";
 
 const ForgotPassword = () => {
     const [email, setEmail] = useState("");
