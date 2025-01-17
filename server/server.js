@@ -14,7 +14,7 @@ const server = http.createServer(app);
 // Set up Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "https://chat-app-client-rm95.onrender.com" , "http://localhost:5173", 
+    origin: "https://chat-app-client-rm95.onrender.com" , 
     methods: ["GET", "POST"],
   },
 });
