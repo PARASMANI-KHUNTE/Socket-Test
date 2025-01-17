@@ -24,7 +24,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "/api/social/auth/google/callback"
+      callbackURL: "https://chat-app-server-zwfu.onrender.com/api/social/auth/google/callback"
     },
     async (accessToken, refreshToken, profile, done) => {
       try {
