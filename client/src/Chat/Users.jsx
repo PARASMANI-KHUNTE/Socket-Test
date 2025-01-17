@@ -5,7 +5,7 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { CreateChat } from "../redux/chatSlice";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://chat-app-server-zwfu.onrender.com";
 
 const Users = () => {
   const [users, setUsers] = useState([]);
