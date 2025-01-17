@@ -14,7 +14,7 @@ const ChatRoom = ({ senderId, receiverId }) => {
   useEffect(() => {
     const fetchReceiverDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/user/${receiverId}`);
+        const response = await axios.get(`https://chat-app-server-zwfu.onrender.com/api/user/${receiverId}`);
         setReceiverDetails(response.data);
         setUsersMap((prev) => ({ ...prev, [receiverId]: response.data.name }));
       } catch (error) {
@@ -28,7 +28,7 @@ const ChatRoom = ({ senderId, receiverId }) => {
   useEffect(() => {
     const createChatRoom = async () => {
       try {
-        const response = await axios.post("http://localhost:5000/api/chat/create", {
+        const response = await axios.post("https://chat-app-server-zwfu.onrender.com/api/chat/create", {
           senderId,
           receiverId,
         });
@@ -45,7 +45,7 @@ const ChatRoom = ({ senderId, receiverId }) => {
       if (!chatId) return;
   
       try {
-        const response = await axios.get(`http://localhost:5000/api/chat/${chatId}/messages`);
+        const response = await axios.get(`https://chat-app-server-zwfu.onrender.com/api/chat/${chatId}/messages`);
         setMessages(response.data);
   
         // Extract the sender ID correctly
@@ -57,7 +57,7 @@ const ChatRoom = ({ senderId, receiverId }) => {
   
         // Fetch user details for unique user IDs
         const userDetails = await Promise.all(
-          uniqueUserIds.map((_id) => axios.get(`http://localhost:5000/api/user/${_id}`))
+          uniqueUserIds.map((_id) => axios.get(`https://chat-app-server-zwfu.onrender.com/api/user/${_id}`))
         );
         const userMap = userDetails.reduce(
           (map, res) => ({ ...map, [res.data._id]: res.data.name }),
