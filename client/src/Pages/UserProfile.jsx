@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { login } from "../redux/userSlice"; // Add your action import
 import {jwtDecode} from 'jwt-decode';
 import { ToastContainer, toast } from 'react-toastify';
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://chat-app-server-zwfu.onrender.com";
 
 const UserProfile = () => {
   const navigate = useNavigate();
