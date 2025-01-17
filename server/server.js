@@ -49,6 +49,7 @@ wss.on("connection", (ws, req) => {
   const receiverId = urlParams.get("receiver");
 
   if (!chatId || !senderId || !receiverId) {
+    console.log(`Invalid connection parameters. chatId: ${chatId}, senderId: ${senderId}, receiverId: ${receiverId}`);
     ws.send("Invalid connection parameters.");
     ws.close();
     return;
@@ -58,17 +59,25 @@ wss.on("connection", (ws, req) => {
   clients.set(ws, { chatId, senderId, receiverId });
   console.log(`Client connected: Sender = ${senderId}, Receiver = ${receiverId}, Chat = ${chatId}`);
 
+  // Handling incoming messages
   ws.on("message", async (messageData) => {
     console.log(`Incoming raw message from ${senderId}: ${messageData}`);
 
     let messageContent;
+
     try {
-      // Try parsing the message as JSON
+      // Try parsing the message as JSON first
       const parsedData = JSON.parse(messageData);
       messageContent = parsedData.text || parsedData.message;
     } catch (err) {
       // If not JSON, treat it as plain text
       messageContent = messageData.toString();
+    }
+
+    // Check if message content is empty or undefined
+    if (!messageContent || messageContent.trim() === "") {
+      ws.send("Message content cannot be empty.");
+      return;
     }
 
     console.log(`Processed message from ${senderId}: ${messageContent}`);
@@ -115,11 +124,13 @@ wss.on("connection", (ws, req) => {
     }
   });
 
+  // Handle WebSocket closure
   ws.on("close", () => {
     clients.delete(ws);
     console.log(`Client disconnected: Sender = ${senderId}, Receiver = ${receiverId}, Chat = ${chatId}`);
   });
 });
+
 // Define an HTTP endpoint for WebSocket info
 app.get('/chat/connect', (req, res) => {
   res.send('This endpoint establishes a WebSocket connection.');

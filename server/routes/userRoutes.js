@@ -15,8 +15,8 @@ router.get("/users", async (req, res) => {
   });
 
 
-router.get("/:id", async (req, res) => {
-    const { id } = req.body;
+  router.get("/:id", async (req, res) => {
+    const { id } = req.params; // Use req.params instead of req.body
   
     try {
       const user = await User.findById(id, { password: 0 }); // Exclude password
@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
       res.status(500).json({ message: "Server error. Unable to fetch user." });
     }
   });
-
+  
 router.post("/user", async (req, res) => {
     const { email } = req.body; // Use req.query for GET requests
   
