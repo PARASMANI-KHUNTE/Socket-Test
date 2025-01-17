@@ -10,6 +10,15 @@ dotenv.config();
 // Create an Express app and an HTTP server
 const app = express();
 const server = http.createServer(app);
+const path = require("path");
+
+// Serve static files from the React app
+app.use(express.static(path.join(__dirname, "client/build")));
+
+// Catch-all route
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "client/build", "index.html"));
+});
 
 // Set up Socket.IO
 const io = new Server(server, {
