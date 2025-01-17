@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const session = require("express-session");
+const {generateToken,verifyToken} = require('../utils/tokenProvider')
 const GoogleStrategy = require("passport-google-oauth20").Strategy;
 // const LinkedInStrategy = require("passport-linkedin-oauth2").Strategy;
 // const FacebookStrategy = require("passport-facebook").Strategy;
@@ -133,15 +134,12 @@ router.get(
   async (req, res) => {
     try {
       const user = req.user;
-      const token = jwt.sign(
-        {
+      const payload = {
           id: user._id,
           name: user.name,
           email: user.email,
-        },
-        process.env.JWT_SECRET || "JWT_SECRET",
-        { expiresIn: "1h" }
-      );
+        }
+      const token =  await generateToken(payload)
       res.status(200).redirect(`http://localhost:5173/home?token=${token}`);
     } catch (err) {
      

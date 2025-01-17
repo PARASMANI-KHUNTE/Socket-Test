@@ -18,7 +18,15 @@ const generateTokenForPassword = (userId) => {
 
 
 const verifyToken = (token) => {
+  if (!token || typeof token !== 'string') {
+    throw new jsonwebtoken.JsonWebTokenError('jsonwebtoken must be a string');
+  }
+
+  try {
     return jsonwebtoken.verify(token, process.env.secretKey);
-}
+  } catch (err) {
+    throw err;
+  }
+};
 
 module.exports = { generateToken, verifyToken ,generateTokenForPassword};

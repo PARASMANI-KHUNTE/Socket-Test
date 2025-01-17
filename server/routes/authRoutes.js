@@ -4,7 +4,7 @@ const {hassPassword,VerifyPassword} = require('../utils/hashUtils')
 const User = require('../models/User')
 const jwt = require('jsonwebtoken')
 const secretkey = process.env.secretKey
-const {generateTokenForPassword} = require('../utils/tokenProvider')
+const {generateTokenForPassword,verifyToken} = require('../utils/tokenProvider')
 const { sendOTP, verifyOTP }  = require('../utils/otpProvider')
 
 
@@ -218,6 +218,36 @@ router.put('/update-password', async (req, res) => {
         });
     }
 });
+
+router.post('/verify-token', async (req, res) => {
+    const { token } = req.body; // Extract the token from the body
+
+    if (!token || typeof token !== 'string') {
+        return res.status(400).json({
+            message: "Token is required and must be a string",
+        });
+    }
+
+    try {
+        const verify = verifyToken(token); // Call your token verification utility
+
+        if (!verify) {
+            return res.status(401).json({
+                message: "Unauthorized",
+            });
+        }
+
+        return res.status(200).json({
+            message: "Authorized",
+        });
+    } catch (error) {
+        console.error("Error verifying token:", error.message);
+        return res.status(401).json({
+            message: "Invalid token",
+        });
+    }
+});
+
 
 // Routes for Social Login
 // router.get("/auth/google", passport.authenticate("google", { scope: ["profile", "email"] }));

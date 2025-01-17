@@ -6,9 +6,9 @@ import LoginPage from './components/AuthComponents/LoginPage';
 import SignupPage from './components/AuthComponents/SignupPage';
 import ForgotPassword from './components/AuthComponents/ForgotPassword';
 import OtpPage from './components/AuthComponents/OtpPage';
-import UserProfile from './components/UserProfile';
+import UserProfile from './Components/UserProfile';
 import ResetPassword from './components/AuthComponents/ResetPassword';
-
+import Chat from './Components/Chat/Chat';
 
 const App = () => {
     return (
@@ -22,7 +22,8 @@ const App = () => {
                     <Route path="/otp" element={<OtpPage />} />
                     <Route path="/home" element={<UserProfile />} />
                     <Route path="/reset-password" element={<ResetPassword />} />
-         
+                    <Route path="/Chat" element={<Chat />} />
+
                 </Routes>
             </div>
         </Router>

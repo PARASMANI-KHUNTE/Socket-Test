@@ -9,6 +9,8 @@ const Logout = () => {
     // Clear token and reset Redux state
     localStorage.removeItem('token');
     dispatch({ type: 'LOGOUT_USER' });
+    localStorage.removeItem('chatid');
+    dispatch({type : 'CloseChat'})
     navigate('/login');
   };
 

@@ -36,8 +36,8 @@ const UserProfile = () => {
           const decoded = jwtDecode(token);
           dispatch(
             login({
-              name: decoded.payload.name,
-              email: decoded.payload.email,
+              name: decoded.name,
+              email: decoded.email,
               token,
             })
           );
