@@ -10,7 +10,7 @@ const ChatBox = ({ senderId, receiverId }) => {
   // Create chat room and get chatId
   const createChatRoom = async () => {
     try {
-      const response = await axios.post("http://localhost:5000/api/chat/create", {
+      const response = await axios.post("https://chat-app-server-zwfu.onrender.com/api/chat/create", {
         senderId,
         receiverId,
       });
@@ -29,7 +29,7 @@ const ChatBox = ({ senderId, receiverId }) => {
   // Fetch messages from the backend
   const fetchMessages = async () => {
     try {
-      const response = await axios.get(`http://localhost:5000/api/chat/${chatId}/messages`);
+      const response = await axios.get(`https://chat-app-server-zwfu.onrender.com/api/chat/${chatId}/messages`);
       setMessages(response.data); // Load messages from the backend
     } catch (error) {
       console.error("Failed to fetch messages", error);
