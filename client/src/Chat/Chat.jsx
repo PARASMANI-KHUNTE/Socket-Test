@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 
-const BASE_URL = "http://localhost:5000";
+const BASE_URL = "https://chat-app-server-zwfu.onrender.com";
 
 const Chat = () => {
   const navigate = useNavigate();
