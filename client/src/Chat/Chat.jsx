@@ -11,7 +11,7 @@ const BASE_URL = "http://localhost:5000";
 
 const Chat = () => {
   const navigate = useNavigate();
-  const {senderId ,receiverId } = useSelector((state) => state.chat);
+  const {chatid,senderId ,receiverId } = useSelector((state) => state.chat);
   const [isAuthenticated, setIsAuthenticated] = useState(null); // Use `null` as initial state
   const [chatId, setChatId] = useState(null);
 
@@ -34,7 +34,7 @@ const Chat = () => {
           console.error("Token verification failed:", error.message);
           localStorage.removeItem("token");
           setIsAuthenticated(false);
-          toast.error("Session expired. Please log in again.");
+          console.log("Session expired. Please log in again.");
           navigate("/login");
         }
       };
@@ -62,7 +62,7 @@ const Chat = () => {
 
         {/* ChatRoom Section */}
         <div className="col-span-2 flex justify-center items-center">
-          {chatId ? <ChatRoom senderId={senderId} receiverId={receiverId} />: <p className="text-center">No Chat Selected</p>}
+          {chatid ? <ChatRoom senderId={senderId} receiverId={receiverId} />: <p className="text-center">No Chat Selected</p>}
         </div>
       </div>
       <ToastContainer />

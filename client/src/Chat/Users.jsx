@@ -38,26 +38,25 @@ const Users = () => {
     try {
         console.log("email - ",email)
         console.log("id - ",id)
+        
       // Fetch senderId using email
-      const senderResponse = await axios.post(`${BASE_URL}/api/user/user`,{email} )
-
-      if (senderResponse.status === 200) {
-        const senderId = senderResponse.data._id;
+      
 
         // Send request to create a chat room
         const response = await axios.post(`${BASE_URL}/api/chat/create`, {
-          senderId,
+          senderId : id,
           receiverId,
         });
 
         if (response.status === 200) {
           const { chatid } = response.data;
+          console.log("chatid - ",chatid)
 
           // Dispatch the chat data to Redux store
           dispatch(
             CreateChat({
               chatid,
-              senderId,
+              senderId : id,
               receiverId,
               message: "",
             })
@@ -66,15 +65,12 @@ const Users = () => {
           // Set active user
           setActiveUserId(receiverId);
 
-          toast.success("Chat room created successfully!");
+          console.log("Chat room created successfully!");
         } else {
-          toast.error("Failed to create chat room.");
+          console.log("Failed to create chat room.");
         }
-      } else {
-        toast.error("Failed to fetch sender details.");
-      }
     } catch (error) {
-      toast.error(`Error creating chat room: ${error.message}`);
+      console.log(`Error creating chat room: ${error.message}`);
     }
   };
 

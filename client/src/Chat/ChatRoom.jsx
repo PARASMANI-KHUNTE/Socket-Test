@@ -40,23 +40,27 @@ const ChatRoom = ({ senderId, receiverId }) => {
     createChatRoom();
   }, [senderId, receiverId]);
 
-  // Fetch messages when the chat room is available
   useEffect(() => {
     const fetchMessages = async () => {
       if (!chatId) return;
-
+  
       try {
         const response = await axios.get(`http://localhost:5000/api/chat/${chatId}/messages`);
         setMessages(response.data);
-
-        // Map user IDs to names for all message senders
-        const userIds = response.data.map((msg) => msg.sender);
+  
+        // Extract the sender ID correctly
+        const userIds = response.data.map((msg) =>
+          typeof msg.sender === "object" && msg.sender._id ? msg.sender._id : msg.sender
+        );
         const uniqueUserIds = [...new Set(userIds)];
+        console.log("uniqueUserIds", uniqueUserIds);
+  
+        // Fetch user details for unique user IDs
         const userDetails = await Promise.all(
-          uniqueUserIds.map((id) => axios.get(`http://localhost:5000/api/user/${id}`))
+          uniqueUserIds.map((_id) => axios.get(`http://localhost:5000/api/user/${_id}`))
         );
         const userMap = userDetails.reduce(
-          (map, res) => ({ ...map, [res.data.id]: res.data.name }),
+          (map, res) => ({ ...map, [res.data._id]: res.data.name }),
           {}
         );
         setUsersMap((prev) => ({ ...prev, ...userMap }));
@@ -66,6 +70,8 @@ const ChatRoom = ({ senderId, receiverId }) => {
     };
     fetchMessages();
   }, [chatId]);
+  
+  
 
   // Establish WebSocket connection
   useEffect(() => {
