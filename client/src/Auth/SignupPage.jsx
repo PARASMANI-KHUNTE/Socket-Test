@@ -2,7 +2,7 @@ import { useState } from 'react';
 import axios from 'axios'
 import { useNavigate } from 'react-router-dom';
 // Set the base URL for your API
-const BASE_URL = 'http://localhost:5000';
+const BASE_URL = 'https://chat-app-server-zwfu.onrender.com';
 import { ToastContainer, toast } from 'react-toastify';
 
 const SignupPage = () => {
@@ -122,7 +122,7 @@ const SignupPage = () => {
                 <div className="flex space-x-4">
                     <button
                         className="flex items-center justify-center px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700"
-                        onClick={() => (window.location.href = "http://localhost:5000/api/social/auth/google")}
+                        onClick={() => (window.location.href = "https://chat-app-server-zwfu.onrender.com/api/social/auth/google")}
                     >
                         Google
                     </button>
