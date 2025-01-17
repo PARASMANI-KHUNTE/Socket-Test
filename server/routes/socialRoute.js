@@ -139,7 +139,7 @@ router.get(
           email: user.email,
         }
       const token =  await generateToken(payload)
-      res.status(200).redirect(`http://localhost:5173/home?token=${token}`);
+      res.status(200).redirect(`https://chat-app-client-rm95.onrender.com/home?token=${token}`);
     } catch (err) {
      
       res.redirect("/failure");
