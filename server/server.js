@@ -14,10 +14,22 @@ const server = http.createServer(app);
 // Set up Socket.IO
 const io = new Server(server, {
   cors: {
-    origin: "https://chat-app-client-rm95.onrender.com" , 
+    origin: (origin, callback) => {
+      const allowedOrigins = [
+        "https://chat-app-client-rm95.onrender.com",
+        "http://localhost:5173",
+      ];
+      
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST"],
   },
 });
+
 
 // Middleware
 app.use(cors());
